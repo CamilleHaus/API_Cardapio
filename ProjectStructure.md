@@ -26,6 +26,9 @@
 12. Criar as respectivas variações de schemas e tipos necessários
 13. Criar o serviço de **Recipes**
 
+14. Criar as respectivas variações de schemas e tipos necessários
+15. Criar o serviço de **Category**
+
 
 
 

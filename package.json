@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "dotenv -e .env.develop -- tsnd --respawn src/server.ts",
+    "migrate:dev": "dotenv -e .env.develop -- npx prisma migrate dev"
   },
   "keywords": [],
   "author": "",
