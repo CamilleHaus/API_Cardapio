@@ -1,11 +1,11 @@
 import { container } from "tsyringe";
-import { RestaurantServices } from "../../services/restaurant.service";
-import { prismaMock } from "../__mocks__/prisma";
+import { RestaurantServices } from "../../../services/restaurant.service";
+import { prismaMock } from "../../__mocks__/prisma";
 import {
   restaurantCreateBodyMock,
   restaurantMock,
   restaurantReturnMock,
-} from "../__mocks__/restaurantMocks";
+} from "../../__mocks__/restaurantMocks";
 
 describe("Unit test: Register Restaurant", () => {
   test("Register restaurant should work correctly", async () => {
@@ -15,7 +15,7 @@ describe("Unit test: Register Restaurant", () => {
 
     // Instanciamos o serviço de resurante pelo Tsyringe para podermos usá-lo
 
-    prismaMock.restaurant.create.mockResolvedValue(restaurantMock);
+    prismaMock.restaurant.create.mockResolvedValue(await restaurantMock());
 
     // Aqui, interceptamos o prisma, e mockamos o resultado que esperamos do banco
 
@@ -30,7 +30,7 @@ describe("Unit test: Register Restaurant", () => {
 
     const restaurantServices = container.resolve(RestaurantServices);
 
-    prismaMock.restaurant.findFirst.mockResolvedValue(restaurantMock)
+    prismaMock.restaurant.findFirst.mockResolvedValue(await restaurantMock())
 
     // Mockamos o findFirst pois é o metodo que usamos no serviço para achar o email do usuário no banco
 
