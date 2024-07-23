@@ -8,8 +8,9 @@ import {
   recipeUpdateBodySchema,
 } from "../schemas/recipe.schema";
 import { VerifyToken } from "../middleware/verifytoken.middleware";
-import { updateRestaurantBodySchema } from "../schemas/restaurant.schema";
 import { IsRestaurantIdValid } from "../middleware/isrestaurantIdValid.middleware";
+import { IsRecipeIdValid } from "../middleware/isRecipeIdValid.middleware";
+import { IsRestaurantRecipeOwner } from "../middleware/isRestaurantRecipeOwner.middleware";
 
 export const recipeRouter = Router();
 
@@ -30,10 +31,14 @@ recipeRouter.post(
 
 // GET - Rota pública
 
-recipeRouter.get("/:id", (req, res) => recipeController.getOne(req, res));
+recipeRouter.get("/:id", IsRecipeIdValid.execute, (req, res) =>
+  recipeController.getOne(req, res)
+);
 
-recipeRouter.get("/restaurant/:restaurantId", IsRestaurantIdValid.execute, (req, res) =>
-  recipeController.getMany(req, res)
+recipeRouter.get(
+  "/restaurant/:restaurantId",
+  IsRestaurantIdValid.execute,
+  (req, res) => recipeController.getMany(req, res)
 );
 
 // PATCH - Rota privada - Precisa de autorização (a.k.a TOKEN)
@@ -42,11 +47,17 @@ recipeRouter.patch(
   "/:id",
   ValidateBody.execute(recipeUpdateBodySchema),
   VerifyToken.execute,
+  IsRecipeIdValid.execute,
+  IsRestaurantRecipeOwner.execute,
   (req, res) => recipeController.update(req, res)
 );
 
 // DELETE - Rota privada - Precisa de autorização (a.k.a TOKEN)
 
-recipeRouter.delete("/:id", VerifyToken.execute, (req, res) =>
-  recipeController.delete(req, res)
+recipeRouter.delete(
+  "/:id",
+  VerifyToken.execute,
+  IsRecipeIdValid.execute,
+  IsRestaurantRecipeOwner.execute,
+  (req, res) => recipeController.delete(req, res)
 );

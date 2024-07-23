@@ -9,6 +9,8 @@ import {
   updateCategoryBodySchema,
 } from "../schemas/category.schema";
 import { IsRestaurantIdValid } from "../middleware/isrestaurantIdValid.middleware";
+import { IsCategoryIdValid } from "../middleware/isCategoryIdValid.middleware";
+import { IsRestaurantCategoryOwner } from "../middleware/isRestaurantCategoryOwner.middleware";
 
 export const categoryRouter = Router();
 
@@ -41,11 +43,17 @@ categoryRouter.patch(
   "/:id",
   VerifyToken.execute,
   ValidateBody.execute(updateCategoryBodySchema),
+  IsCategoryIdValid.execute,
+  IsRestaurantCategoryOwner.execute,
   (req, res) => categoryController.update(req, res)
 );
 
 // DELETE - Rota privada - Precisa de autorização (a.k.a TOKEN)
 
-categoryRouter.delete("/:id", VerifyToken.execute, (req, res) =>
-  categoryController.delete(req, res)
+categoryRouter.delete(
+  "/:id",
+  VerifyToken.execute,
+  IsCategoryIdValid.execute,
+  IsRestaurantCategoryOwner.execute,
+  (req, res) => categoryController.delete(req, res)
 );
