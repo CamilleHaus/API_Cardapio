@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../errors/AppError"
 import { ZodError } from "zod";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 export class HandleErrors {
     static execute(error: Error, req: Request, res: Response, next: NextFunction) {
@@ -15,6 +16,10 @@ export class HandleErrors {
         if( error instanceof ZodError) {
             return res.status(409).json(error)
         }
+
+        if (error instanceof JsonWebTokenError) {
+            return res.status(401).json({ messsage: error.message });
+         }
 
         // Essa instância lida com erros do Zod, que podem vir da validação do body, como no middleware ValidateBody
         console.log(error)

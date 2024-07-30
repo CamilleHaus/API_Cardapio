@@ -1,12 +1,11 @@
 import { prisma } from "../../../database/prisma";
 import {
-  restaurantCreateBodyMock,
   restaurantCreateDataMock,
   restaurantLoginBodyMock,
   wrongPasswordLoginBodyMock,
-  wrongRestaurantCreateBodyMock,
   wrongRestaurantLoginBodyMock,
 } from "../../__mocks__/restaurantMocks";
+import { restaurantDefaultExpects } from "../../utils/restaurantDefaultExpects";
 import { request } from "../../utils/supertest";
 
 describe("Integration test: Login Restaurant", () => {
@@ -28,11 +27,7 @@ describe("Integration test: Login Restaurant", () => {
     // Fazemos o login igual fazemos com o serviço
 
     expect(data.accessToken).toBeDefined();
-    expect(data.restaurant).toBeDefined();
-    expect(data.restaurant.id).toBe(user.id);
-    expect(data.restaurant.name).toBe(user.name);
-    expect(data.restaurant.email).toBe(user.email);
-    expect(data.restaurant.description).toBe(user.description);
+    restaurantDefaultExpects(data.restaurant, user);
     expect(data.restaurant.password).toBeUndefined();
   });
 
