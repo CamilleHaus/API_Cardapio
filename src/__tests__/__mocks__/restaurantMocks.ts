@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 
 export const restaurant = {
   id: "9768e898-cd31-49f1-baf4-bc938cfd39ec",
-  name: "Resurant",
+  name: "Restaurant",
   email: "restaurant@email.com",
   description: null,
   password: "1234",
@@ -25,6 +25,17 @@ export const restaurantMock = async () => {
 
   return {
     id: restaurant.id,
+    name: restaurant.name,
+    email: restaurant.email,
+    description: restaurant.description,
+    password: hashedPassword,
+  };
+};
+
+export const restaurantCreateDataMock = async () => {
+  const hashedPassword = await bcrypt.hash(restaurant.password, 10);
+
+  return {
     name: restaurant.name,
     email: restaurant.email,
     description: restaurant.description,
@@ -78,3 +89,14 @@ export const restaurantUpdateReturnMock = {
   email: restaurant.email,
   description: restaurantUpdateBodyMock.description,
 };
+
+export const wrongRestaurantCreateBodyMock = {
+  name: 123,
+  email: 123,
+  password: 123,
+};
+
+export const wrongRestaurantLoginBodyMock = {
+  email: 123,
+  password: 123
+}

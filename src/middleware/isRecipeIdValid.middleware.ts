@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../database/prisma";
-import { AppError } from "../errors/appError";
+import { AppError } from "../errors/AppError"
 
 export class IsRecipeIdValid {
     static async execute(req: Request, res: Response, next: NextFunction) {

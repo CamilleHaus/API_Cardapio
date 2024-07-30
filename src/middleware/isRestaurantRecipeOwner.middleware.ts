@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError } from "../errors/appError";
+import { AppError } from "../errors/AppError"
 
 export class IsRestaurantRecipeOwner {
   static async execute(req: Request, res: Response, next: NextFunction) {

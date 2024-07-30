@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { AppError } from "../errors/appError";
+import { AppError } from "../errors/AppError"
 
 export class VerifyToken {
     static execute(req: Request, res: Response, next: NextFunction) {

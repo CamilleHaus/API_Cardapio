@@ -1,108 +1,121 @@
 import { injectable } from "tsyringe";
 import { prisma } from "../database/prisma";
-import { AppError } from "../errors/appError";
-import { TPublicRestaurant, TRestaurantLogin, TRestaurantLoginReturn, TRestaurantRegisterBody, TRestaurantReturn, TRestaurantUpdateBody, publicRestaurantReturn, restaurantReturnSchema } from "../schemas/restaurant.schema";
+import { AppError } from "../errors/AppError";
+import {
+  TPublicRestaurant,
+  TRestaurantLogin,
+  TRestaurantLoginReturn,
+  TRestaurantRegisterBody,
+  TRestaurantReturn,
+  TRestaurantUpdateBody,
+  publicRestaurantReturn,
+  restaurantReturnSchema,
+} from "../schemas/restaurant.schema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 @injectable()
 export class RestaurantServices {
-    async register(body: TRestaurantRegisterBody): Promise<TRestaurantReturn> {
+  async register(body: TRestaurantRegisterBody): Promise<TRestaurantReturn> {
+    const existingRestaurant = await prisma.restaurant.findFirst({
+      where: { email: body.email },
+    });
 
-        const existingRestaurant = await prisma.restaurant.findFirst({
-            where: { email: body.email }
-        });
-
-        if (existingRestaurant) {
-            throw new AppError("This email is already registered", 403);
-        }
-
-        // Primeira verificação tem que ser essa pois se o email já existe no banco de dados, ele não pode ser cadastrado novamente
-
-        const hashPassword = await bcrypt.hash(body.password, 10);
-
-        const newRestaurantData = { ...body, password: hashPassword };
-
-        // Aqui, não podemos guardar no banco uma senha não-criptografada, por isso, criptografamos ela
-        // Então, criamos um novo objeto que "espalha" o que vem do body e substitui a senha pela sua versao codificada
-
-        const restaurant = await prisma.restaurant.create({ data: newRestaurantData })
-
-        return restaurantReturnSchema.parse(restaurant);
-
-        // Retiramos a senha do retorno com o método parse
+    if (existingRestaurant) {
+      throw new AppError("This email is already registered", 403);
     }
 
-    async login(body: TRestaurantLogin): Promise<TRestaurantLoginReturn> {
+    // Primeira verificação tem que ser essa pois se o email já existe no banco de dados, ele não pode ser cadastrado novamente
 
-        const restaurant = await prisma.restaurant.findFirst({
-            where: { email: body.email }
-        });
+    const hashPassword = await bcrypt.hash(body.password, 10);
 
-        if (!restaurant) {
-            throw new AppError("Restaurant not registered", 404)
-        }
+    const newRestaurantData = { ...body, password: hashPassword };
 
-        // Primeiro, procuramos se o restaurante existe no banco de dados. Se não exister, soltamos o erro
+    // Aqui, não podemos guardar no banco uma senha não-criptografada, por isso, criptografamos ela
+    // Então, criamos um novo objeto que "espalha" o que vem do body e substitui a senha pela sua versao codificada
 
-        const comparePassword = await bcrypt.compare(body.password, restaurant.password);
+    const restaurant = await prisma.restaurant.create({
+      data: newRestaurantData,
+    });
 
-        if (!comparePassword) {
-            throw new AppError("Email and password doesn't match", 401);
-        }
+    return restaurantReturnSchema.parse(restaurant);
 
-        // Aqui, caso achemos o email no DB, precisamos validar se as senhas batem. Então usamos o bcrypt para comparar
-        // pois a senha no DB está hasheada
+    // Retiramos a senha do retorno com o método parse
+  }
 
-        const secret = process.env.JWT_SECRET as string;
+  async login(body: TRestaurantLogin): Promise<TRestaurantLoginReturn> {
+    const restaurant = await prisma.restaurant.findFirst({
+      where: { email: body.email },
+    });
 
-        const token = jwt.sign({ id: restaurant.id }, secret)
-
-        return {
-            accessToken: token,
-            restaurant: restaurantReturnSchema.parse(restaurant)
-        }
-
-        // Aqui, usando o jwt e o método sign, criamos um token baseado no ID do usuário. 
-        // Retornados então um objeto com o token e o restaurant (sem a senha)
+    if (!restaurant) {
+      throw new AppError("Restaurant not registered", 404);
     }
 
-    async update(body: TRestaurantUpdateBody, restaurantId: string): Promise<TRestaurantReturn> {
+    // Primeiro, procuramos se o restaurante existe no banco de dados. Se não exister, soltamos o erro
 
-        const restaurant = await prisma.restaurant.update({
-            where: {
-                id: restaurantId
-            },
-            data: body
-        })
+    const comparePassword = await bcrypt.compare(
+      body.password,
+      restaurant.password
+    );
 
-        return restaurantReturnSchema.parse(restaurant)
-
-        // Aqui, colocamos a clausula do WHERE para garantir que apenas o restaurante corresponde ao restaurantId passado
-        // possa ser atualizado
+    if (!comparePassword) {
+      throw new AppError("Email and password doesn't match", 401);
     }
 
-    async getRestaurant(restaurantId: string): Promise<TRestaurantReturn> {
+    // Aqui, caso achemos o email no DB, precisamos validar se as senhas batem. Então usamos o bcrypt para comparar
+    // pois a senha no DB está hasheada
 
-        const restaurant = await prisma.restaurant.findFirst({
-            where: {
-                id: restaurantId
-            }
-        })
+    const secret = process.env.JWT_SECRET as string;
 
-        return restaurantReturnSchema.parse(restaurant)
-    }
+    const token = jwt.sign({ id: restaurant.id }, secret);
 
-    async getManyRestaurants(): Promise<TPublicRestaurant[]> {
+    return {
+      accessToken: token,
+      restaurant: restaurantReturnSchema.parse(restaurant),
+    };
 
-        const restaurant = await prisma.restaurant.findMany();
+    // Aqui, usando o jwt e o método sign, criamos um token baseado no ID do usuário.
+    // Retornados então um objeto com o token e o restaurant (sem a senha)
+  }
 
-        const publicRestaurant = restaurant.map((restaurant) =>
-            publicRestaurantReturn.parse(restaurant))
+  async update(
+    body: TRestaurantUpdateBody,
+    restaurantId: string
+  ): Promise<TRestaurantReturn> {
+    const restaurant = await prisma.restaurant.update({
+      where: {
+        id: restaurantId,
+      },
+      data: body,
+    });
 
-        return publicRestaurant
+    return restaurantReturnSchema.parse(restaurant);
 
-        // Aqui, buscamos todos os restaurantes e para retorna-los apenas com os dados necessários, fazemos um map
-        // sobre a lista de restaurantes onde todo restaurante retornado passará pelo PARSE antes
-    }
+    // Aqui, colocamos a clausula do WHERE para garantir que apenas o restaurante corresponde ao restaurantId passado
+    // possa ser atualizado
+  }
+
+  async getRestaurant(restaurantId: string): Promise<TRestaurantReturn> {
+    const restaurant = await prisma.restaurant.findFirst({
+      where: {
+        id: restaurantId,
+      },
+    });
+
+    return restaurantReturnSchema.parse(restaurant);
+  }
+
+  async getManyRestaurants(): Promise<TPublicRestaurant[]> {
+    const restaurant = await prisma.restaurant.findMany();
+
+    const publicRestaurant = restaurant.map((restaurant) =>
+      publicRestaurantReturn.parse(restaurant)
+    );
+
+    return publicRestaurant;
+
+    // Aqui, buscamos todos os restaurantes e para retorna-los apenas com os dados necessários, fazemos um map
+    // sobre a lista de restaurantes onde todo restaurante retornado passará pelo PARSE antes
+  }
 }
