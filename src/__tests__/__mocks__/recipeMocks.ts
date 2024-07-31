@@ -26,7 +26,6 @@ export const secondRecipeMock = {
 
 export const recipeListMock = [recipeMock, secondRecipeMock];
 
-
 export const updatedRecipeMock = {
   id: recipeMock.id,
   name: "Recipe 3",
@@ -34,18 +33,41 @@ export const updatedRecipeMock = {
   price: 4546,
   restaurantId: recipeMock.restaurantId,
   categoryId: "3c621916-04a9-4b70-a0d0-61ea0bf57796",
-}
+};
 
 export const updateRecipeBodyMock = {
   name: updatedRecipeMock.name,
   description: updatedRecipeMock.description,
   price: updatedRecipeMock.price,
   categoryId: updatedRecipeMock.categoryId,
-}
+};
 
 export const recipeWrongCreateBodyMock = {
   name: 123,
   description: 123,
   price: "123",
-  categoryId: 123
-}
+  categoryId: 123,
+};
+
+export const restaurantRecipeCreateDataMock = (restaurantId: string) => {
+  return {
+    name: "Recipe",
+    description: "Recipe Example",
+    price: 1234,
+    restaurantId,
+    categoryId: null,
+  };
+};
+
+// Criamos esse mock para podermos criar varias receitas no banco de dados
+
+export const updateRecipeDataMock = (categoryId: string | null) => {
+  return {
+    name: updatedRecipeMock.name,
+    description: updatedRecipeMock.description,
+    price: updatedRecipeMock.price,
+    categoryId
+  };
+};
+
+// Criamos esse mock pois precisamos vincular a receita a uma categoria

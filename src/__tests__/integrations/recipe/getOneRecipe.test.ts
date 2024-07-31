@@ -18,21 +18,19 @@ describe("Integration test: Get one recipe", () => {
     // Criamos a receita no banco
 
     const data = await request
-    .get(`/recipes/${recipe.id}`)
-    .expect(200)
-    .then((response) => response.body);
+      .get(`/recipes/${recipe.id}`)
+      .expect(200)
+      .then((response) => response.body);
 
     expect(data).toStrictEqual(recipe);
   });
 
   test("Should throw an error when ID is not valid", async () => {
+    const data = await request
+      .get(`/recipes/727dd33c-12ff-494d-9ee6-5896e8a924b4`)
+      .expect(404)
+      .then((response) => response.body);
 
-    await request
-    .get(`/recipes/727dd33c-12ff-494d-9ee6-5896e8a924b4`)
-    .expect(404)
-
-    // O teste unitário já testa a mensagem, por isso não testamos aqui
+    expect(data.message).toBe("Recipe not found");
   });
-
-
 });
