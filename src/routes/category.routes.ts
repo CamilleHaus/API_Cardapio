@@ -33,7 +33,7 @@ categoryRouter.post(
 
 // GET - Rota Pública
 
-categoryRouter.get("/:restaurantId", IsRestaurantIdValid.execute, (req, res) =>
+categoryRouter.get("/:restaurantId", IsCategoryIdValid.execute, (req, res) =>
   categoryController.getMany(req, res)
 );
 

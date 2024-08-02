@@ -29,3 +29,18 @@ export const updatedCategoryMock = {
 export const updateCategoryBodyMock = {
   name: updatedCategoryMock.name,
 };
+
+export const categoryWrongCreareBodyMock = {
+  name: 123,
+};
+
+
+export const restaurantCategoryCreateDataMock = (restaurantId: string) => {
+
+  return {
+    name: "Category",
+    restaurantId
+  }
+}
+
+// Simulamos a criaçao de uma categoria baseada em um restaurante especifico
