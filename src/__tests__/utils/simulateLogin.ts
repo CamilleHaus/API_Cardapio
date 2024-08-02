@@ -28,3 +28,11 @@ export const invalidToken = () => {
 
   return token;
 };
+
+export const wrongUserToken = () => {
+  const token = jwt.sign({ id: "12345678abc"}, process.env.JWT_SECRET as string);
+
+  return token;
+}
+
+// Aqui estamos simulando um usuário, porém passando um ID que não existiria para nao corrermos riscos

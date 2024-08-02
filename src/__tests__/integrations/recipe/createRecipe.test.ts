@@ -103,8 +103,13 @@ describe("Integration test: Create recipe", () => {
   });
 
   test("Should throw error when invalid data type in body parameter", async () => {
+    const { token } = await simulateLogin();
+
+    // Login simulado apenas para aumentar a precisão dos testes, mas funcionaria sem
+
     const data = await request
       .post("/recipes")
+      .set("Authorization", `Bearer ${token}`)
       .expect(409)
       .send(recipeWrongCreateBodyMock)
       .then((response) => response.body);

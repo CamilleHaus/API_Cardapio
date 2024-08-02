@@ -49,6 +49,13 @@ export const recipeWrongCreateBodyMock = {
   categoryId: 123,
 };
 
+export const recipeWrongUpdateBodyMock = {
+  name: 123,
+  description: 123,
+  price: "123",
+  categoryId: 123,
+};
+
 export const restaurantRecipeCreateDataMock = (restaurantId: string) => {
   return {
     name: "Recipe",
