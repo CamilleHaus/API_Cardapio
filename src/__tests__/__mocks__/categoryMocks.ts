@@ -30,7 +30,11 @@ export const updateCategoryBodyMock = {
   name: updatedCategoryMock.name,
 };
 
-export const categoryWrongCreareBodyMock = {
+export const categoryWrongCreateBodyMock = {
+  name: 123,
+};
+
+export const categoryWrongUpdateBodyMock = {
   name: 123,
 };
 

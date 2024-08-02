@@ -1,6 +1,6 @@
 import {
   categoryCreateBodyMock,
-  categoryWrongCreareBodyMock,
+  categoryWrongCreateBodyMock,
 } from "../../__mocks__/categoryMocks";
 import { invalidToken, simulateLogin } from "../../utils/simulateLogin";
 import { request } from "../../utils/supertest";
@@ -71,7 +71,7 @@ describe("Integration test: Create Category", () => {
       .post("/categories")
       .set("Authorization", `Bearer ${token}`)
       .expect(409)
-      .send(categoryWrongCreareBodyMock)
+      .send(categoryWrongCreateBodyMock)
       .then((response) => response.body);
 
     // Enviamos um objeto com as chaves certas porém os tipos de dados errados
